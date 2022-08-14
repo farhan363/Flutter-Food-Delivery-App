@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:monkey_app_demo/screens/changeAddressScreen.dart';
 
 import './screens/spashScreen.dart';
@@ -23,6 +24,7 @@ import './screens/inboxScreen.dart';
 import './screens/myOrderScreen.dart';
 import './screens/checkoutScreen.dart';
 import './const/colors.dart';
+import 'auth/auth_repository.dart';
 
 void main() {
   runApp(MyApp());
@@ -80,7 +82,11 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: SplashScreen(),
+      //home: SplashScreen(),
+      home: RepositoryProvider(
+        create: (context) => AuthRepository(),
+        child: LoginScreen(),
+      ),
       routes: {
         LandingScreen.routeName: (context) => LandingScreen(),
         LoginScreen.routeName: (context) => LoginScreen(),
