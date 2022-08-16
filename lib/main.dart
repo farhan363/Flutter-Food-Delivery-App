@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:monkey_app_demo/auth/auth_navigator.dart';
 import 'package:monkey_app_demo/screens/changeAddressScreen.dart';
 
 import './screens/spashScreen.dart';
@@ -24,7 +25,10 @@ import './screens/inboxScreen.dart';
 import './screens/myOrderScreen.dart';
 import './screens/checkoutScreen.dart';
 import './const/colors.dart';
+import 'auth/app_navigator.dart';
+import 'auth/auth_cubit.dart';
 import 'auth/auth_repository.dart';
+import 'session_cubit.dart';
 
 void main() {
   runApp(MyApp());
@@ -85,7 +89,10 @@ class MyApp extends StatelessWidget {
       //home: SplashScreen(),
       home: RepositoryProvider(
         create: (context) => AuthRepository(),
-        child: LoginScreen(),
+        child: BlocProvider(
+          create: (context) => SessionCubit(authRepo: context.read<AuthRepository>()),
+          child: AppNavigator(),
+        ),
       ),
       routes: {
         LandingScreen.routeName: (context) => LandingScreen(),

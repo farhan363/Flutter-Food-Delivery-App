@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:monkey_app_demo/auth/auth_credentials.dart';
+import 'package:monkey_app_demo/auth/auth_cubit.dart';
 import '../auth_repository.dart';
 import 'form_submission_status.dart';
 
@@ -9,7 +11,8 @@ part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final AuthRepository authRepo;
-  LoginBloc({this.authRepo}) : super(LoginState()) {
+  final AuthCubit authCubit;
+  LoginBloc({this.authRepo, this.authCubit}) : super(LoginState()) {
     //on<LoginEvent>((event, emit)
     @override
     Stream<LoginState> mapEventToState(LoginEvent event) async* {
@@ -21,8 +24,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       } else if (event is LoginSubmitted) {
         yield state.copyWith(formStatus: FormSubmitting());
         try {
-          await authRepo.login();
+          final userId = await authRepo.login(
+            email: state.email, password: state.password
+          );
+          await authRepo.login(email: state.email, password: state.password);
           yield state.copyWith(formStatus: SubmissionSuccess());
+          authCubit.launchSession(AuthCredentials(userId: state.email));
         } catch (e) {
           yield state.copyWith(formStatus: SubmissionFailed(e));
         }

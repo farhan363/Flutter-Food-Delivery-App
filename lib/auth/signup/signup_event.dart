@@ -10,7 +10,7 @@ class SignupEmailChanged extends SignupEvent {
 class SignupPasswordChanged extends SignupEvent {
   final String password;
 
-  SignupPasswordChanged(this.password);
+  SignupPasswordChanged({this.password});
 }
 class SignupSubmitted extends SignupEvent {
 }

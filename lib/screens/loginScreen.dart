@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:monkey_app_demo/auth/auth_repository.dart';
 import 'package:monkey_app_demo/screens/forgetPwScreen.dart';
 
+import '../auth/auth_cubit.dart';
 import '../auth/login/form_submission_status.dart';
 import '../auth/login/login_bloc.dart';
 import '../const/colors.dart';
@@ -18,7 +19,10 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocProvider(
-        create: (context) => LoginBloc(authRepo: context.read<AuthRepository>()),
+        create: (context) => LoginBloc(
+            authRepo: context.read<AuthRepository>(),
+            authCubit: context.read<AuthCubit>()
+        ),
         child: Stack(alignment: Alignment.bottomCenter,
           children: [
             BlocListener<LoginBloc, LoginState>(
@@ -35,6 +39,10 @@ class LoginScreen extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 40),
                     child: Column(
                         children: [
+                          Text(
+                            'LOGIN',
+                            style: Theme.of(context).textTheme.headline4,
+                          ),
                           _emailField(),
                           _passwordField(),
                           _loginButton(),
@@ -43,7 +51,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                 )
             ),
-            _showSignUpButton(),
+            _showSignUpButton(context),
           ]
         ),
       ),
@@ -82,8 +90,8 @@ class LoginScreen extends StatelessWidget {
   Widget _loginButton() {
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (context, state) {
-        return state.formStatus is FormSubmitting ? CircularProgressIndicator() :
-         Padding(
+        return state.formStatus is FormSubmitting ? CircularProgressIndicator()
+        : Padding(
            padding: const EdgeInsets.all(18.0),
            child: ElevatedButton(
             child: const Text('Login'),
@@ -93,14 +101,15 @@ class LoginScreen extends StatelessWidget {
               }
             },
         ),
-         );
+        );
       });
   }
-  Widget _showSignUpButton() {
+  Widget _showSignUpButton(BuildContext context) {
       return SafeArea(
           child: TextButton(
               child: Text('Don\'t have an account? Sign up here'),
-            onPressed: () {},)
+            onPressed: () => context.read<AuthCubit>().showSignup(),
+          )
       );
   }
   void _showSnackBar(BuildContext context, String message) {
